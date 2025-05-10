@@ -384,18 +384,6 @@ struct ArchiveView: View {
     @State private var previewMarkdown: PreviewMarkdown? = nil
     @Environment(\.dismiss) private var dismiss
 
-    func exportFile(_ file: ExportedFile) {
-        let tempDir = FileManager.default.temporaryDirectory
-        let fileURL = tempDir.appendingPathComponent(file.filename)
-        do {
-            try file.content.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
-            shareURL = fileURL
-            showShareSheet = true
-        } catch {
-            // Handle error
-        }
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             HStack {
