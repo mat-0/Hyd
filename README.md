@@ -1,4 +1,4 @@
-# Hyd - Note Taking & Export App
+# Hyd - Jekyll Companion App
 
 Hyd is a simple, accessible note-taking and Markdown export app for macOS and iOS, designed for fast capture, easy export, and archiving of notes. All logic and UI are now in a single file: `AppMain.swift`.
 
@@ -51,6 +51,3 @@ Hyd is a simple, accessible note-taking and Markdown export app for macOS and iO
 1. Open `Hyd.xcodeproj` in Xcode.
 2. Build and run on your Mac or iOS device/simulator.
 
----
-
-For questions or feedback, please open an issue or contact the maintainer.
