@@ -250,7 +250,7 @@ struct ContentView: View {
                 id: UUID(), filename: filename, date: Date(), content: markdown)
             exportHistory.add(file: exportedFile)
         } catch {
-            // Handle error (show alert, etc.)
+            print("Failed to export markdown: \(error.localizedDescription)")
         }
     }
 
@@ -535,9 +535,14 @@ struct ArchiveView: View {
     func export(file: ExportedFile) {
         let tempDir = FileManager.default.temporaryDirectory
         let fileURL = tempDir.appendingPathComponent(file.filename)
-        try? file.content.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
-        shareURL = fileURL
-        showShareSheet = true
+        do {
+            try file.content.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
+            shareURL = fileURL
+            showShareSheet = true
+        } catch {
+            // Show an alert or print error
+            print("Failed to export file: \(error.localizedDescription)")
+        }
     }
 
     func reimport(file: ExportedFile) {
