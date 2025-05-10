@@ -479,7 +479,7 @@ struct ArchiveView: View {
                         if let onSelect = onSelect {
                             onSelect(file)
                         } else {
-                            selectedFile = file
+                            previewMarkdown = PreviewMarkdown(text: file.content)
                         }
                     }
                     .contextMenu {
@@ -493,9 +493,6 @@ struct ArchiveView: View {
                     }
                 }
                 .onDelete(perform: store.delete)
-                .sheet(item: $previewMarkdown, onDismiss: { previewMarkdown = nil }) { markdown in
-                    PreviewView(text: markdown.text)
-                }
             }
         }
         .sheet(isPresented: $showShareSheet, onDismiss: { shareURL = nil }) {
@@ -510,11 +507,6 @@ struct ArchiveView: View {
         .sheet(item: $previewMarkdown, onDismiss: { previewMarkdown = nil }) { markdown in
             PreviewView(text: markdown.text)
         }
-        .alert(item: $selectedFile) { file in
-            Alert(
-                title: Text(file.filename), message: Text(file.content),
-                dismissButton: .default(Text("OK")))
-        }
     }
 
     func performSwipeAction(_ action: String, file: ExportedFile) {
@@ -526,11 +518,7 @@ struct ArchiveView: View {
         case "restore":
             reimport(file: file)
         case "preview":
-            if previewMarkdown == nil {
-                DispatchQueue.main.async {
-                    previewMarkdown = PreviewMarkdown(text: file.content)
-                }
-            }
+            previewMarkdown = PreviewMarkdown(text: file.content)
         default:
             break
         }
