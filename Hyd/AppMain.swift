@@ -121,28 +121,14 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Form {
-                    Section(header: Text("Title")) {
-                        TextField("Enter title", text: $title)
-                            .font(.system(size: fontSize))
-                    }
-                    Section(header: Text("Body (Markdown)")) {
-                        TextEditor(text: $bodyText)
-                            .frame(minHeight: 200)
-                            .font(.system(size: fontSize))
-                    }
-                    Section(header: Text("Optional")) {
-                        TextField("Link", text: $link)
-                            .font(.system(size: fontSize))
-                        TextField("Citation", text: $citation)
-                            .font(.system(size: fontSize))
-                        TextField("Author (override default)", text: $optionalAuthor)
-                            .font(.system(size: fontSize))
-                        TextField("Tags (override default, comma separated)", text: $optionalTags)
-                            .font(.system(size: fontSize))
-                    }
-                    Section {
-                        HStack(spacing: 16) {
+                VStack(spacing: 0) {
+                    // Header with title and Save/Clear buttons
+                    HStack {
+                        Text("New Post")
+                            .font(.system(size: fontSize, weight: .semibold))
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        HStack(spacing: 8) {
                             Button(action: saveEntry) {
                                 if showAccessibilityLabels {
                                     Label("Save", systemImage: "tray.and.arrow.down.fill")
@@ -150,11 +136,9 @@ struct ContentView: View {
                                     Image(systemName: "tray.and.arrow.down.fill")
                                 }
                             }
-                            .frame(maxWidth: .infinity)
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.bordered)
                             .tint(.green)
-                            .controlSize(.large)
-                            .font(.headline)
+                            .font(.system(size: fontSize, weight: .semibold))
                             .disabled(title.isEmpty || bodyText.isEmpty)
                             .if(showAccessibilityLabels) { $0.accessibilityLabel("Save Note") }
 
@@ -165,12 +149,37 @@ struct ContentView: View {
                                     Image(systemName: "trash")
                                 }
                             }
-                            .frame(maxWidth: .infinity)
                             .buttonStyle(.bordered)
                             .tint(.red)
-                            .controlSize(.large)
-                            .font(.headline)
+                            .font(.system(size: fontSize, weight: .semibold))
                             .if(showAccessibilityLabels) { $0.accessibilityLabel("Clear Form") }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 12)
+                    .padding(.bottom, 4)
+
+                    Form {
+                        Section(header: Text("Title")) {
+                            TextField("Enter title", text: $title)
+                                .font(.system(size: fontSize))
+                        }
+                        Section(header: Text("Body (Markdown)")) {
+                            TextEditor(text: $bodyText)
+                                .frame(minHeight: 200)
+                                .font(.system(size: fontSize))
+                        }
+                        Section(header: Text("Optional")) {
+                            TextField("Link", text: $link)
+                                .font(.system(size: fontSize))
+                            TextField("Citation", text: $citation)
+                                .font(.system(size: fontSize))
+                            TextField("Author (override default)", text: $optionalAuthor)
+                                .font(.system(size: fontSize))
+                            TextField(
+                                "Tags (override default, comma separated)", text: $optionalTags
+                            )
+                            .font(.system(size: fontSize))
                         }
                     }
                 }
@@ -178,6 +187,7 @@ struct ContentView: View {
                 #if os(iOS)
                     .navigationBarTitleDisplayMode(.inline)
                 #endif
+                // Pin footer to bottom using a VStack with Spacer
                 VStack {
                     Spacer()
                     FooterMenuBar(
@@ -187,6 +197,7 @@ struct ContentView: View {
                         exportDisabled: title.isEmpty || bodyText.isEmpty
                     )
                 }
+                .ignoresSafeArea(edges: .bottom)
             }
             .background(AppColors.background)
             .sheet(isPresented: $showShareSheet, onDismiss: cleanupExportFile) {
@@ -356,7 +367,7 @@ struct FooterMenuBar: View {
     @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
 
     var body: some View {
-        HStack {
+        HStack(alignment: .center) {  // Explicitly center vertically
             Button(action: { showArchive = true }) {
                 if showAccessibilityLabels {
                     Label("Archive", systemImage: "archivebox")
@@ -391,10 +402,10 @@ struct FooterMenuBar: View {
             }
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Settings") }
         }
-        .padding(.horizontal, 30)
-        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24, alignment: .center)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 24)
         .background(AppColors.background)
-        .frame(maxWidth: .infinity)
     }
 }
 
