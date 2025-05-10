@@ -193,7 +193,7 @@ struct ContentView: View {
                 #if os(iOS)
                     .navigationBarTitleDisplayMode(.inline)
                 #endif
-                // Pin footer to bottom using a VStack with Spacer
+                // Footer pinned to bottom
                 VStack {
                     Spacer()
                     FooterMenuBar(
@@ -203,7 +203,6 @@ struct ContentView: View {
                         exportDisabled: title.isEmpty || bodyText.isEmpty
                     )
                 }
-                .ignoresSafeArea(edges: .bottom)
             }
             .background(AppColors.background)
             .sheet(isPresented: $showShareSheet, onDismiss: cleanupExportFile) {
@@ -373,7 +372,8 @@ struct FooterMenuBar: View {
     @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
 
     var body: some View {
-        HStack(alignment: .center) {  // Explicitly center vertically
+        HStack {
+            Spacer()
             Button(action: { showArchive = true }) {
                 if showAccessibilityLabels {
                     Label("Archive", systemImage: "archivebox")
@@ -407,11 +407,12 @@ struct FooterMenuBar: View {
                 }
             }
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Settings") }
+            Spacer()
         }
-        .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24, alignment: .center)
-        .padding(.horizontal, 24)
-        .padding(.vertical, 24)
+        .padding(.vertical, 8)
         .background(AppColors.background)
+        .overlay(Divider(), alignment: .top)
+        .frame(maxWidth: .infinity)
     }
 }
 
