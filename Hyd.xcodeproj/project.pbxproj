@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		407E06422DCFC3EF006D2CA6 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 407E06412DCFC3EF006D2CA6 /* Markdown */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		407E061B2DCFC286006D2CA6 /* Hyd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hyd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				407E06422DCFC3EF006D2CA6 /* Markdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Hyd;
 			packageProductDependencies = (
+				407E06412DCFC3EF006D2CA6 /* Markdown */,
 			);
 			productName = Hyd;
 			productReference = 407E061B2DCFC286006D2CA6 /* Hyd.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 407E06122DCFC286006D2CA6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				407E06402DCFC3EF006D2CA6 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 407E061C2DCFC286006D2CA6 /* Products */;
 			projectDirPath = "";
@@ -324,6 +333,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		407E06402DCFC3EF006D2CA6 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-markdown";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		407E06412DCFC3EF006D2CA6 /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 407E06402DCFC3EF006D2CA6 /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 407E06132DCFC286006D2CA6 /* Project object */;
 }
