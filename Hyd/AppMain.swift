@@ -94,6 +94,12 @@ struct AppColors {
     }
 }
 
+// Wrapper struct for previewing markdown
+struct PreviewMarkdown: Identifiable, Equatable {
+    let id = UUID()
+    let text: String
+}
+
 struct ContentView: View {
     @State private var title: String = ""
     @State private var bodyText: String = ""
@@ -309,7 +315,7 @@ struct ArchiveView: View {
     @State private var selectedFile: ExportedFile?
     @State private var showShareSheet = false
     @State private var shareURL: URL?
-    @State private var previewMarkdown: String? = nil
+    @State private var previewMarkdown: PreviewMarkdown? = nil
     @Environment(\.dismiss) private var dismiss
 
     func exportFile(_ file: ExportedFile) {
@@ -349,10 +355,22 @@ struct ArchiveView: View {
                             Text(file.date, style: .date).font(.caption).foregroundColor(.secondary)
                         }
                         Spacer()
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(Color.accentColor)
-                            .imageScale(.medium)
-                            .opacity(0.85)
+                        if file.filename.hasSuffix(".md") {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(Color.accentColor)
+                                .imageScale(.medium)
+                                .opacity(0.85)
+                        } else if file.filename.hasSuffix(".draft") {
+                            Image(systemName: "doc.text")
+                                .foregroundColor(.gray)
+                                .imageScale(.medium)
+                                .opacity(0.7)
+                        } else {
+                            Image(systemName: "questionmark.circle")
+                                .foregroundColor(.gray)
+                                .imageScale(.medium)
+                                .opacity(0.5)
+                        }
                     }
                     .contentShape(Rectangle())
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
@@ -409,16 +427,8 @@ struct ArchiveView: View {
                     }
                 }
                 .onDelete(perform: store.delete)
-                .sheet(
-                    isPresented: Binding<Bool>(
-                        get: { previewMarkdown != nil },
-                        set: { if !$0 { previewMarkdown = nil } }
-                    ),
-                    onDismiss: { previewMarkdown = nil }
-                ) {
-                    if let markdown = previewMarkdown {
-                        PreviewView(text: markdown)
-                    }
+                .sheet(item: $previewMarkdown, onDismiss: { previewMarkdown = nil }) { markdown in
+                    PreviewView(text: markdown.text)
                 }
             }
         }
@@ -430,6 +440,9 @@ struct ArchiveView: View {
                     Text("Sharing is only available on iOS.")
                 #endif
             }
+        }
+        .sheet(item: $previewMarkdown, onDismiss: { previewMarkdown = nil }) { markdown in
+            PreviewView(text: markdown.text)
         }
         .alert(item: $selectedFile) { file in
             Alert(
@@ -447,10 +460,9 @@ struct ArchiveView: View {
         case "restore":
             reimport(file: file)
         case "preview":
-            // Prevent multiple presentations and only set if nil
             if previewMarkdown == nil {
                 DispatchQueue.main.async {
-                    previewMarkdown = file.content
+                    previewMarkdown = PreviewMarkdown(text: file.content)
                 }
             }
         default:
@@ -507,45 +519,63 @@ struct SettingsView: View {
     @AppStorage("swipeLeftLongAction") private var swipeLeftLongAction: String = "restore"
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "export"
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        Form {
-            Section(header: Text("Appearance")) {
-                Picker("Theme", selection: $preferredColorScheme) {
-                    Text("System").tag("system")
-                    Text("Light").tag("light")
-                    Text("Dark").tag("dark")
-                }
-                .pickerStyle(SegmentedPickerStyle())
+        VStack(spacing: 0) {
+            HStack {
+                Text("Settings")
+                    .font(.headline)
+                    .padding(.leading)
+                Spacer()
+                Button("Close") { dismiss() }
+                    .padding(.trailing)
             }
-            Section(header: Text("Defaults")) {
-                TextField("Default Author", text: $defaultAuthor)
-                TextField("Default Tags (comma separated)", text: $defaultTags)
-            }
-            Section(header: Text("Swipe Actions")) {
-                Picker("Left Short Swipe", selection: $swipeLeftShortAction) {
-                    Text("Delete").tag("delete")
-                    Text("Restore").tag("restore")
-                    Text("Export").tag("export")
-                    Text("Preview").tag("preview")
+            .frame(height: 44)
+            #if os(iOS)
+                .background(AppColors.background)
+            #else
+                .background(AppColors.background)
+            #endif
+            Divider()
+            Form {
+                Section(header: Text("Appearance")) {
+                    Picker("Theme", selection: $preferredColorScheme) {
+                        Text("System").tag("system")
+                        Text("Light").tag("light")
+                        Text("Dark").tag("dark")
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
                 }
-                Picker("Left Long Swipe", selection: $swipeLeftLongAction) {
-                    Text("Delete").tag("delete")
-                    Text("Restore").tag("restore")
-                    Text("Export").tag("export")
-                    Text("Preview").tag("preview")
+                Section(header: Text("Defaults")) {
+                    TextField("Default Author", text: $defaultAuthor)
+                    TextField("Default Tags (comma separated)", text: $defaultTags)
                 }
-                Picker("Right Short Swipe", selection: $swipeRightShortAction) {
-                    Text("Delete").tag("delete")
-                    Text("Restore").tag("restore")
-                    Text("Export").tag("export")
-                    Text("Preview").tag("preview")
-                }
-                Picker("Right Long Swipe", selection: $swipeRightLongAction) {
-                    Text("Delete").tag("delete")
-                    Text("Restore").tag("restore")
-                    Text("Export").tag("export")
-                    Text("Preview").tag("preview")
+                Section(header: Text("Swipe Actions")) {
+                    Picker("Left Short Swipe", selection: $swipeLeftShortAction) {
+                        Text("Delete").tag("delete")
+                        Text("Restore").tag("restore")
+                        Text("Export").tag("export")
+                        Text("Preview").tag("preview")
+                    }
+                    Picker("Left Long Swipe", selection: $swipeLeftLongAction) {
+                        Text("Delete").tag("delete")
+                        Text("Restore").tag("restore")
+                        Text("Export").tag("export")
+                        Text("Preview").tag("preview")
+                    }
+                    Picker("Right Short Swipe", selection: $swipeRightShortAction) {
+                        Text("Delete").tag("delete")
+                        Text("Restore").tag("restore")
+                        Text("Export").tag("export")
+                        Text("Preview").tag("preview")
+                    }
+                    Picker("Right Long Swipe", selection: $swipeRightLongAction) {
+                        Text("Delete").tag("delete")
+                        Text("Restore").tag("restore")
+                        Text("Export").tag("export")
+                        Text("Preview").tag("preview")
+                    }
                 }
             }
         }
