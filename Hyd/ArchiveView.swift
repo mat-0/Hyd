@@ -93,9 +93,16 @@ struct ArchiveView: View {
             Divider()
             List {
                 ForEach(store.files) { file in
-                    VStack(alignment: .leading) {
-                        Text(file.filename).font(.headline)
-                        Text(file.date, style: .date).font(.caption).foregroundColor(.secondary)
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(file.filename).font(.headline)
+                            Text(file.date, style: .date).font(.caption).foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Color.accentColor)
+                            .imageScale(.medium)
+                            .opacity(0.85)
                     }
                     .contentShape(Rectangle())
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
