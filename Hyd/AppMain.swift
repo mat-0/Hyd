@@ -144,12 +144,13 @@ struct ContentView: View {
                     Section {
                         HStack(spacing: 16) {
                             Button(action: saveEntry) {
-                                HStack {
+                                if showAccessibilityLabels {
+                                    Label("Save", systemImage: "tray.and.arrow.down.fill")
+                                } else {
                                     Image(systemName: "tray.and.arrow.down.fill")
-                                    Text("Save")
                                 }
-                                .frame(maxWidth: .infinity)
                             }
+                            .frame(maxWidth: .infinity)
                             .buttonStyle(.borderedProminent)
                             .tint(.green)
                             .controlSize(.large)
@@ -158,12 +159,13 @@ struct ContentView: View {
                             .if(showAccessibilityLabels) { $0.accessibilityLabel("Save Note") }
 
                             Button(action: clearForm) {
-                                HStack {
+                                if showAccessibilityLabels {
+                                    Label("Clear", systemImage: "trash")
+                                } else {
                                     Image(systemName: "trash")
-                                    Text("Clear")
                                 }
-                                .frame(maxWidth: .infinity)
                             }
+                            .frame(maxWidth: .infinity)
                             .buttonStyle(.bordered)
                             .tint(.red)
                             .controlSize(.large)
@@ -350,43 +352,27 @@ struct FooterMenuBar: View {
     @Binding var showSettings: Bool
     let exportAction: () -> Void
     let exportDisabled: Bool
-    @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
     @AppStorage("fontSize") private var fontSize: Double = 14
     @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
 
     var body: some View {
         HStack {
             Button(action: { showArchive = true }) {
-                if showFooterLabels {
-                    Label("Archive", systemImage: "archivebox")
-                        .font(.system(size: fontSize))
-                } else {
-                    Image(systemName: "archivebox")
-                        .font(.title2)
-                }
+                Image(systemName: "archivebox")
+                    .font(.title2)
             }
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Archive") }
             Spacer()
             Button(action: exportAction) {
-                if showFooterLabels {
-                    Label("Export", systemImage: "square.and.arrow.up")
-                        .font(.system(size: fontSize))
-                } else {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.title2)
-                }
+                Image(systemName: "square.and.arrow.up")
+                    .font(.title2)
             }
             .disabled(exportDisabled)
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Export Current Note") }
             Spacer()
             Button(action: { showSettings = true }) {
-                if showFooterLabels {
-                    Label("Settings", systemImage: "gear")
-                        .font(.system(size: fontSize))
-                } else {
-                    Image(systemName: "gear")
-                        .font(.title2)
-                }
+                Image(systemName: "gear")
+                    .font(.title2)
             }
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Settings") }
         }
@@ -616,7 +602,6 @@ struct SettingsView: View {
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "export"
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
     @AppStorage("fontSize") private var fontSize: Double = 14
-    @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
     @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
     @Environment(\.dismiss) private var dismiss
 
@@ -656,7 +641,6 @@ struct SettingsView: View {
                         Text("\(Int(fontSize)) pt")
                             .frame(width: 48, alignment: .trailing)
                     }
-                    Toggle("Show Footer Text Labels", isOn: $showFooterLabels)
                     Toggle("Enable Accessibility Labels", isOn: $showAccessibilityLabels)
                 }
                 Section(header: Text("Defaults")) {
