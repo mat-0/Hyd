@@ -113,6 +113,7 @@ struct ContentView: View {
     @AppStorage("defaultAuthor") private var defaultAuthor: String = ""
     @AppStorage("defaultTags") private var defaultTags: String = ""
     @AppStorage("fontSize") private var fontSize: Double = 14
+    @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
     @StateObject private var exportHistory = ExportHistoryStore()
     @State private var showArchive = false
     @State private var showSettings = false
@@ -154,6 +155,7 @@ struct ContentView: View {
                             .controlSize(.large)
                             .font(.headline)
                             .disabled(title.isEmpty || bodyText.isEmpty)
+                            .if(showAccessibilityLabels) { $0.accessibilityLabel("Save Note") }
 
                             Button(action: clearForm) {
                                 HStack {
@@ -166,6 +168,7 @@ struct ContentView: View {
                             .tint(.red)
                             .controlSize(.large)
                             .font(.headline)
+                            .if(showAccessibilityLabels) { $0.accessibilityLabel("Clear Form") }
                         }
                     }
                 }
@@ -349,6 +352,7 @@ struct FooterMenuBar: View {
     let exportDisabled: Bool
     @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
     @AppStorage("fontSize") private var fontSize: Double = 14
+    @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
 
     var body: some View {
         HStack {
@@ -361,6 +365,7 @@ struct FooterMenuBar: View {
                         .font(.title2)
                 }
             }
+            .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Archive") }
             Spacer()
             Button(action: exportAction) {
                 if showFooterLabels {
@@ -372,6 +377,7 @@ struct FooterMenuBar: View {
                 }
             }
             .disabled(exportDisabled)
+            .if(showAccessibilityLabels) { $0.accessibilityLabel("Export Current Note") }
             Spacer()
             Button(action: { showSettings = true }) {
                 if showFooterLabels {
@@ -382,6 +388,7 @@ struct FooterMenuBar: View {
                         .font(.title2)
                 }
             }
+            .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Settings") }
         }
         .padding(.horizontal, 30)
         .padding(.vertical, 12)
@@ -398,6 +405,7 @@ struct ArchiveView: View {
     @AppStorage("swipeLeftLongAction") private var swipeLeftLongAction: String = "export"
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "restore"
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
+    @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
     @State private var selectedFile: ExportedFile?
     @State private var showShareSheet = false
     @State private var shareURL: URL?
@@ -413,6 +421,7 @@ struct ArchiveView: View {
                 Spacer()
                 Button("Close") { dismiss() }
                     .padding(.trailing)
+                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Close Archive") }
             }
             .frame(height: 44)
             #if os(iOS)
@@ -434,6 +443,7 @@ struct ArchiveView: View {
                         Spacer(minLength: 40)
                     }
                     .frame(maxWidth: .infinity)
+                    .if(showAccessibilityLabels) { $0.accessibilityLabel("No archived items") }
                 } else {
                     ForEach(store.files) { file in
                         HStack {
@@ -461,6 +471,10 @@ struct ArchiveView: View {
                             }
                         }
                         .contentShape(Rectangle())
+                        .if(showAccessibilityLabels) {
+                            $0.accessibilityLabel(
+                                "Exported file \(file.filename), date \(file.date.formatted())")
+                        }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
                                 performSwipeAction(swipeLeftShortAction, file: file)
@@ -603,6 +617,7 @@ struct SettingsView: View {
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
     @AppStorage("fontSize") private var fontSize: Double = 14
     @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
+    @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -614,6 +629,7 @@ struct SettingsView: View {
                 Spacer()
                 Button("Close") { dismiss() }
                     .padding(.trailing)
+                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Close Settings") }
             }
             .frame(height: 44)
             #if os(iOS)
@@ -630,15 +646,18 @@ struct SettingsView: View {
                         Text("Dark").tag("dark")
                     }
                     .pickerStyle(SegmentedPickerStyle())
+                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Theme Picker") }
                     HStack {
                         Text("Font Size")
                         Slider(value: $fontSize, in: 10...28, step: 2) {
                             Text("Font Size")
                         }
+                        .if(showAccessibilityLabels) { $0.accessibilityLabel("Font Size") }
                         Text("\(Int(fontSize)) pt")
                             .frame(width: 48, alignment: .trailing)
                     }
                     Toggle("Show Footer Text Labels", isOn: $showFooterLabels)
+                    Toggle("Enable Accessibility Labels", isOn: $showAccessibilityLabels)
                 }
                 Section(header: Text("Defaults")) {
                     TextField("Default Author", text: $defaultAuthor)
@@ -678,6 +697,7 @@ struct SettingsView: View {
 // MARK: - PreviewView (moved from PreviewView.swift)
 struct PreviewView: View {
     let text: String
+    @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -689,6 +709,7 @@ struct PreviewView: View {
                 Spacer()
                 Button("Close") { dismiss() }
                     .padding(.trailing)
+                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Close Preview") }
             }
             .frame(height: 44)
             #if os(iOS)
@@ -706,6 +727,9 @@ struct PreviewView: View {
                     )
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
+                    .if(showAccessibilityLabels) {
+                        $0.accessibilityLabel("Previewed Markdown Content")
+                    }
             }
         }
         .interactiveDismissDisabled(true)
@@ -717,6 +741,19 @@ struct HydApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+        }
+    }
+}
+
+extension View {
+    @ViewBuilder func `if`<Content: View>(
+        _ condition: Bool,
+        transform: (Self) -> Content
+    ) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }
