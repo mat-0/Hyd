@@ -344,23 +344,39 @@ struct FooterMenuBar: View {
     @Binding var showSettings: Bool
     let exportAction: () -> Void
     let exportDisabled: Bool
+    @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
 
     var body: some View {
         HStack {
             Button(action: { showArchive = true }) {
-                Image(systemName: "archivebox")
-                    .font(.title2)
+                if showFooterLabels {
+                    Label("Archive", systemImage: "archivebox")
+                        .font(.title2)
+                } else {
+                    Image(systemName: "archivebox")
+                        .font(.title2)
+                }
             }
             Spacer()
             Button(action: exportAction) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.title2)
+                if showFooterLabels {
+                    Label("Export", systemImage: "square.and.arrow.up")
+                        .font(.title2)
+                } else {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.title2)
+                }
             }
             .disabled(exportDisabled)
             Spacer()
             Button(action: { showSettings = true }) {
-                Image(systemName: "gear")
-                    .font(.title2)
+                if showFooterLabels {
+                    Label("Settings", systemImage: "gear")
+                        .font(.title2)
+                } else {
+                    Image(systemName: "gear")
+                        .font(.title2)
+                }
             }
         }
         .padding(.horizontal, 30)
@@ -567,6 +583,7 @@ struct SettingsView: View {
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "export"
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
     @AppStorage("fontSize") private var fontSize: Double = 14
+    @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -602,6 +619,7 @@ struct SettingsView: View {
                         Text("\(Int(fontSize)) pt")
                             .frame(width: 48, alignment: .trailing)
                     }
+                    Toggle("Show Footer Labels (Accessibility)", isOn: $showFooterLabels)
                 }
                 Section(header: Text("Defaults")) {
                     TextField("Default Author", text: $defaultAuthor)
