@@ -653,7 +653,7 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Settings")
-                    .font(.headline)
+                    .font(.system(size: fontSize, weight: .semibold))
                     .padding(.leading)
                 Spacer()
                 Button(action: { dismiss() }) {
@@ -679,53 +679,91 @@ struct SettingsView: View {
             #endif
             Divider()
             Form {
-                Section(header: Text("Appearance")) {
-                    Picker("Theme", selection: $preferredColorScheme) {
-                        Text("System").tag("system")
-                        Text("Light").tag("light")
-                        Text("Dark").tag("dark")
+                Section(header: Text("Appearance").font(.system(size: fontSize, weight: .semibold)))
+                {
+                    HStack {
+                        Text("Theme")
+                            .font(.system(size: fontSize))
+                        Spacer()
+                        Picker("Theme", selection: $preferredColorScheme) {
+                            Text("System").tag("system").font(.system(size: fontSize))
+                            Text("Light").tag("light").font(.system(size: fontSize))
+                            Text("Dark").tag("dark").font(.system(size: fontSize))
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .if(showAccessibilityLabels) { $0.accessibilityLabel("Theme Picker") }
+                        .font(.system(size: fontSize))
                     }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Theme Picker") }
                     HStack {
                         Text("Font Size")
-                        Slider(value: $fontSize, in: 10...28, step: 2) {
-                            Text("Font Size")
+                            .font(.system(size: fontSize))
+                        Slider(value: $fontSize, in: 10...20, step: 2) {
+                            Text("Font Size").font(.system(size: fontSize))
                         }
                         .if(showAccessibilityLabels) { $0.accessibilityLabel("Font Size") }
                         Text("\(Int(fontSize)) pt")
-                            .frame(width: 48, alignment: .trailing)
+                            .font(.system(size: fontSize))
+                            .frame(width: 64, alignment: .trailing)
                     }
                     Toggle("Enable Accessibility Labels", isOn: $showAccessibilityLabels)
+                        .font(.system(size: fontSize))
                 }
-                Section(header: Text("Defaults")) {
+                Section(header: Text("Defaults").font(.system(size: fontSize, weight: .semibold))) {
                     TextField("Default Author", text: $defaultAuthor)
+                        .font(.system(size: fontSize))
                     TextField("Default Tags (comma separated)", text: $defaultTags)
+                        .font(.system(size: fontSize))
                 }
-                Section(header: Text("Swipe Actions")) {
-                    Picker("Left Short Swipe", selection: $swipeLeftShortAction) {
-                        Text("Delete").tag("delete")
-                        Text("Restore").tag("restore")
-                        Text("Export").tag("export")
-                        Text("Preview").tag("preview")
+                Section(
+                    header: Text("Swipe Actions").font(.system(size: fontSize, weight: .semibold))
+                ) {
+                    HStack {
+                        Text("Left Short Swipe")
+                            .font(.system(size: fontSize))
+                        Spacer()
+                        Picker(selection: $swipeLeftShortAction, label: EmptyView()) {
+                            Text("Delete").tag("delete").font(.system(size: fontSize))
+                            Text("Restore").tag("restore").font(.system(size: fontSize))
+                            Text("Export").tag("export").font(.system(size: fontSize))
+                            Text("Preview").tag("preview").font(.system(size: fontSize))
+                        }
+                        .font(.system(size: fontSize))
                     }
-                    Picker("Left Long Swipe", selection: $swipeLeftLongAction) {
-                        Text("Delete").tag("delete")
-                        Text("Restore").tag("restore")
-                        Text("Export").tag("export")
-                        Text("Preview").tag("preview")
+                    HStack {
+                        Text("Left Long Swipe")
+                            .font(.system(size: fontSize))
+                        Spacer()
+                        Picker(selection: $swipeLeftLongAction, label: EmptyView()) {
+                            Text("Delete").tag("delete").font(.system(size: fontSize))
+                            Text("Restore").tag("restore").font(.system(size: fontSize))
+                            Text("Export").tag("export").font(.system(size: fontSize))
+                            Text("Preview").tag("preview").font(.system(size: fontSize))
+                        }
+                        .font(.system(size: fontSize))
                     }
-                    Picker("Right Short Swipe", selection: $swipeRightShortAction) {
-                        Text("Delete").tag("delete")
-                        Text("Restore").tag("restore")
-                        Text("Export").tag("export")
-                        Text("Preview").tag("preview")
+                    HStack {
+                        Text("Right Short Swipe")
+                            .font(.system(size: fontSize))
+                        Spacer()
+                        Picker(selection: $swipeRightShortAction, label: EmptyView()) {
+                            Text("Delete").tag("delete").font(.system(size: fontSize))
+                            Text("Restore").tag("restore").font(.system(size: fontSize))
+                            Text("Export").tag("export").font(.system(size: fontSize))
+                            Text("Preview").tag("preview").font(.system(size: fontSize))
+                        }
+                        .font(.system(size: fontSize))
                     }
-                    Picker("Right Long Swipe", selection: $swipeRightLongAction) {
-                        Text("Delete").tag("delete")
-                        Text("Restore").tag("restore")
-                        Text("Export").tag("export")
-                        Text("Preview").tag("preview")
+                    HStack {
+                        Text("Right Long Swipe")
+                            .font(.system(size: fontSize))
+                        Spacer()
+                        Picker(selection: $swipeRightLongAction, label: EmptyView()) {
+                            Text("Delete").tag("delete").font(.system(size: fontSize))
+                            Text("Restore").tag("restore").font(.system(size: fontSize))
+                            Text("Export").tag("export").font(.system(size: fontSize))
+                            Text("Preview").tag("preview").font(.system(size: fontSize))
+                        }
+                        .font(.system(size: fontSize))
                     }
                 }
             }
