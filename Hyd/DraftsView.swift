@@ -110,7 +110,11 @@ struct DraftsView: View {
                     .padding(.trailing)
             }
             .frame(height: 44)
-            .background(Color(.systemBackground))
+            #if os(iOS)
+                .background(Color(UIColor.systemBackground))
+            #else
+                .background(Color(NSColor.windowBackgroundColor))
+            #endif
             Divider()
             List {
                 ForEach(store.drafts) { draft in
@@ -214,8 +218,6 @@ struct DraftsView: View {
 
     func markdownForDraft(_ draft: Draft) -> String {
         let date = ISO8601DateFormatter().string(from: draft.date).prefix(10)
-        let safeTitle = draft.title.lowercased().replacingOccurrences(of: " ", with: "-")
-            .replacingOccurrences(of: "[^a-z0-9-]", with: "", options: .regularExpression)
         let yaml = """
             ---
             title: \(draft.title)
