@@ -422,85 +422,100 @@ struct ArchiveView: View {
             #endif
             Divider()
             List {
-                ForEach(store.files) { file in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(file.filename).font(.headline)
-                            Text(file.date, style: .date).font(.caption).foregroundColor(.secondary)
+                if store.files.isEmpty {
+                    VStack(alignment: .center) {
+                        Spacer(minLength: 40)
+                        Image(systemName: "tray")
+                            .font(.system(size: 40))
+                            .foregroundColor(.secondary)
+                        Text("No archived items.")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                        Spacer(minLength: 40)
+                    }
+                    .frame(maxWidth: .infinity)
+                } else {
+                    ForEach(store.files) { file in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(file.filename).font(.headline)
+                                Text(file.date, style: .date).font(.caption).foregroundColor(
+                                    .secondary)
+                            }
+                            Spacer()
+                            if file.filename.hasSuffix(".md") {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(Color.accentColor)
+                                    .imageScale(.medium)
+                                    .opacity(0.85)
+                            } else if file.filename.hasSuffix(".draft") {
+                                Image(systemName: "doc.text")
+                                    .foregroundColor(.gray)
+                                    .imageScale(.medium)
+                                    .opacity(0.7)
+                            } else {
+                                Image(systemName: "questionmark.circle")
+                                    .foregroundColor(.gray)
+                                    .imageScale(.medium)
+                                    .opacity(0.5)
+                            }
                         }
-                        Spacer()
-                        if file.filename.hasSuffix(".md") {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(Color.accentColor)
-                                .imageScale(.medium)
-                                .opacity(0.85)
-                        } else if file.filename.hasSuffix(".draft") {
-                            Image(systemName: "doc.text")
-                                .foregroundColor(.gray)
-                                .imageScale(.medium)
-                                .opacity(0.7)
-                        } else {
-                            Image(systemName: "questionmark.circle")
-                                .foregroundColor(.gray)
-                                .imageScale(.medium)
-                                .opacity(0.5)
+                        .contentShape(Rectangle())
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                performSwipeAction(swipeLeftShortAction, file: file)
+                            } label: {
+                                Label(
+                                    swipeLeftShortAction.capitalized,
+                                    systemImage: iconName(for: swipeLeftShortAction))
+                            }
+                            .tint(tintColor(for: swipeLeftShortAction))
+                            Button {
+                                performSwipeAction(swipeLeftLongAction, file: file)
+                            } label: {
+                                Label(
+                                    swipeLeftLongAction.capitalized,
+                                    systemImage: iconName(for: swipeLeftLongAction))
+                            }
+                            .tint(tintColor(for: swipeLeftLongAction))
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button {
+                                performSwipeAction(swipeRightShortAction, file: file)
+                            } label: {
+                                Label(
+                                    swipeRightShortAction.capitalized,
+                                    systemImage: iconName(for: swipeRightShortAction))
+                            }
+                            .tint(tintColor(for: swipeRightShortAction))
+                            Button {
+                                performSwipeAction(swipeRightLongAction, file: file)
+                            } label: {
+                                Label(
+                                    swipeRightLongAction.capitalized,
+                                    systemImage: iconName(for: swipeRightLongAction))
+                            }
+                            .tint(tintColor(for: swipeRightLongAction))
+                        }
+                        .onTapGesture {
+                            if let onSelect = onSelect {
+                                onSelect(file)
+                            } else {
+                                previewMarkdown = PreviewMarkdown(text: file.content)
+                            }
+                        }
+                        .contextMenu {
+                            Button("Export") { export(file: file) }
+                            Button("Reimport") { reimport(file: file) }
+                            Button(role: .destructive) {
+                                delete(file: file)
+                            } label: {
+                                Text("Delete")
+                            }
                         }
                     }
-                    .contentShape(Rectangle())
-                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                        Button {
-                            performSwipeAction(swipeLeftShortAction, file: file)
-                        } label: {
-                            Label(
-                                swipeLeftShortAction.capitalized,
-                                systemImage: iconName(for: swipeLeftShortAction))
-                        }
-                        .tint(tintColor(for: swipeLeftShortAction))
-                        Button {
-                            performSwipeAction(swipeLeftLongAction, file: file)
-                        } label: {
-                            Label(
-                                swipeLeftLongAction.capitalized,
-                                systemImage: iconName(for: swipeLeftLongAction))
-                        }
-                        .tint(tintColor(for: swipeLeftLongAction))
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button {
-                            performSwipeAction(swipeRightShortAction, file: file)
-                        } label: {
-                            Label(
-                                swipeRightShortAction.capitalized,
-                                systemImage: iconName(for: swipeRightShortAction))
-                        }
-                        .tint(tintColor(for: swipeRightShortAction))
-                        Button {
-                            performSwipeAction(swipeRightLongAction, file: file)
-                        } label: {
-                            Label(
-                                swipeRightLongAction.capitalized,
-                                systemImage: iconName(for: swipeRightLongAction))
-                        }
-                        .tint(tintColor(for: swipeRightLongAction))
-                    }
-                    .onTapGesture {
-                        if let onSelect = onSelect {
-                            onSelect(file)
-                        } else {
-                            previewMarkdown = PreviewMarkdown(text: file.content)
-                        }
-                    }
-                    .contextMenu {
-                        Button("Export") { export(file: file) }
-                        Button("Reimport") { reimport(file: file) }
-                        Button(role: .destructive) {
-                            delete(file: file)
-                        } label: {
-                            Text("Delete")
-                        }
-                    }
+                    .onDelete(perform: store.delete)
                 }
-                .onDelete(perform: store.delete)
             }
         }
         .sheet(isPresented: $showShareSheet, onDismiss: { shareURL = nil }) {
