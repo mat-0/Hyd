@@ -358,21 +358,36 @@ struct FooterMenuBar: View {
     var body: some View {
         HStack {
             Button(action: { showArchive = true }) {
-                Image(systemName: "archivebox")
-                    .font(.title2)
+                if showAccessibilityLabels {
+                    Label("Archive", systemImage: "archivebox")
+                        .font(.system(size: fontSize))
+                } else {
+                    Image(systemName: "archivebox")
+                        .font(.system(size: fontSize))
+                }
             }
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Archive") }
             Spacer()
             Button(action: exportAction) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.title2)
+                if showAccessibilityLabels {
+                    Label("Export", systemImage: "square.and.arrow.up")
+                        .font(.system(size: fontSize))
+                } else {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: fontSize))
+                }
             }
             .disabled(exportDisabled)
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Export Current Note") }
             Spacer()
             Button(action: { showSettings = true }) {
-                Image(systemName: "gear")
-                    .font(.title2)
+                if showAccessibilityLabels {
+                    Label("Settings", systemImage: "gear")
+                        .font(.system(size: fontSize))
+                } else {
+                    Image(systemName: "gear")
+                        .font(.system(size: fontSize))
+                }
             }
             .if(showAccessibilityLabels) { $0.accessibilityLabel("Open Settings") }
         }
