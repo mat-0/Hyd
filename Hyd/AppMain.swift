@@ -105,11 +105,14 @@ struct ContentView: View {
     @State private var bodyText: String = ""
     @State private var link: String = ""
     @State private var citation: String = ""
+    @State private var optionalAuthor: String = ""
+    @State private var optionalTags: String = ""
     @State private var showShareSheet = false
     @State private var exportURL: URL?
     @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
     @AppStorage("defaultAuthor") private var defaultAuthor: String = ""
     @AppStorage("defaultTags") private var defaultTags: String = ""
+    @AppStorage("fontSize") private var fontSize: Double = 14
     @StateObject private var exportHistory = ExportHistoryStore()
     @State private var showArchive = false
     @State private var showSettings = false
@@ -120,14 +123,50 @@ struct ContentView: View {
                 Form {
                     Section(header: Text("Title")) {
                         TextField("Enter title", text: $title)
+                            .font(.system(size: fontSize))
                     }
                     Section(header: Text("Body (Markdown)")) {
                         TextEditor(text: $bodyText)
                             .frame(minHeight: 200)
+                            .font(.system(size: fontSize))
                     }
                     Section(header: Text("Optional")) {
                         TextField("Link", text: $link)
+                            .font(.system(size: fontSize))
                         TextField("Citation", text: $citation)
+                            .font(.system(size: fontSize))
+                        TextField("Author (override default)", text: $optionalAuthor)
+                            .font(.system(size: fontSize))
+                        TextField("Tags (override default, comma separated)", text: $optionalTags)
+                            .font(.system(size: fontSize))
+                    }
+                    Section {
+                        HStack(spacing: 16) {
+                            Button(action: saveEntry) {
+                                HStack {
+                                    Image(systemName: "tray.and.arrow.down.fill")
+                                    Text("Save")
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.green)
+                            .controlSize(.large)
+                            .font(.headline)
+                            .disabled(title.isEmpty || bodyText.isEmpty)
+
+                            Button(action: clearForm) {
+                                HStack {
+                                    Image(systemName: "trash")
+                                    Text("Clear")
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.red)
+                            .controlSize(.large)
+                            .font(.headline)
+                        }
                     }
                 }
                 .navigationTitle("New Post")
@@ -137,8 +176,6 @@ struct ContentView: View {
                         showArchive: $showArchive,
                         showSettings: $showSettings,
                         exportAction: exportMarkdown,
-                        saveAction: saveEntry,
-                        clearAction: clearForm,
                         exportDisabled: title.isEmpty || bodyText.isEmpty
                     )
                 }
@@ -195,10 +232,12 @@ struct ContentView: View {
         let safeTitle = title.lowercased().replacingOccurrences(of: " ", with: "-")
             .replacingOccurrences(of: "[^a-z0-9-]", with: "", options: .regularExpression)
         let filename = "\(date)-\(safeTitle).md"
+        let authorToUse = optionalAuthor.isEmpty ? defaultAuthor : optionalAuthor
+        let tagsToUse = optionalTags.isEmpty ? defaultTags : optionalTags
         let markdown = """
             ---
             title: \(title)
-            \(link.isEmpty ? "" : "link: \(link)\n")\(citation.isEmpty ? "" : "cited: \(citation)\n")author: \(defaultAuthor)\n\(defaultTags.isEmpty ? "" : "tags: [\(defaultTags.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.joined(separator: ", "))]\n")date: \(date)\n\n---\n\n
+            \(link.isEmpty ? "" : "link: \(link)\n")\(citation.isEmpty ? "" : "cited: \(citation)\n")author: \(authorToUse)\n\(tagsToUse.isEmpty ? "" : "tags: [\(tagsToUse.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.joined(separator: ", "))]\n")date: \(date)\n\n---\n\n
             """ + bodyText + "\n"
         let tempDir = FileManager.default.temporaryDirectory
         let fileURL = tempDir.appendingPathComponent(filename)
@@ -217,32 +256,70 @@ struct ContentView: View {
 
     func saveEntry() {
         let date = Date()
-        let safeTitle = title.lowercased().replacingOccurrences(of: " ", with: "-")
-            .replacingOccurrences(of: "[^a-z0-9-]", with: "", options: .regularExpression)
-        let filename = "\(ISO8601DateFormatter().string(from: date).prefix(10))-\(safeTitle).md"
+        let dateFormatter = ISO8601DateFormatter()
+        let todayPrefix = String(dateFormatter.string(from: date).prefix(10))
+        // Check if title already has a date prefix (yyyy-mm-dd-...)
+        let filenameBase: String
+        let datePrefix: String
+        let titleNoExt = title.replacingOccurrences(of: ".md", with: "")
+        let parts = titleNoExt.components(separatedBy: "-")
+        let isDatePrefix =
+            parts.count > 2 && parts[0].count == 4 && parts[1].count == 2 && parts[2].count == 2
+            && Int(parts[0]) != nil && Int(parts[1]) != nil && Int(parts[2]) != nil
+        if isDatePrefix {
+            datePrefix = parts[0...2].joined(separator: "-")
+            filenameBase = parts.dropFirst(3).joined(separator: "-")
+        } else {
+            datePrefix = todayPrefix
+            filenameBase = titleNoExt.lowercased().replacingOccurrences(of: " ", with: "-")
+                .replacingOccurrences(of: "[^a-z0-9-]", with: "", options: .regularExpression)
+        }
+        let filename = "\(datePrefix)-\(filenameBase).md"
+        let authorToUse = optionalAuthor.isEmpty ? defaultAuthor : optionalAuthor
+        let tagsToUse = optionalTags.isEmpty ? defaultTags : optionalTags
         let markdown = """
             ---
             title: \(title)
-            \(link.isEmpty ? "" : "link: \(link)\n")\(citation.isEmpty ? "" : "cited: \(citation)\n")author: \(defaultAuthor)\n\(defaultTags.isEmpty ? "" : "tags: [\(defaultTags.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.joined(separator: ", "))]\n")date: \(ISO8601DateFormatter().string(from: date).prefix(10))\n\n---\n\n
+            \(link.isEmpty ? "" : "link: \(link)\n")\(citation.isEmpty ? "" : "cited: \(citation)\n")author: \(authorToUse)\n\(tagsToUse.isEmpty ? "" : "tags: [\(tagsToUse.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.joined(separator: ", "))]\n")date: \(datePrefix)\n\n---\n\n
             """ + bodyText + "\n"
-        let exportedFile = ExportedFile(
-            id: UUID(), filename: filename, date: date, content: markdown)
-        exportHistory.add(file: exportedFile)
+        // Remove any previous file with the same filename (replace in-place if exists)
+        if let idx = exportHistory.files.firstIndex(where: { $0.filename == filename }) {
+            exportHistory.files[idx] = ExportedFile(
+                id: exportHistory.files[idx].id,  // preserve id
+                filename: filename,
+                date: date,
+                content: markdown
+            )
+        } else {
+            let exportedFile = ExportedFile(
+                id: UUID(), filename: filename, date: date, content: markdown)
+            exportHistory.add(file: exportedFile)
+        }
         clearForm()
     }
 
     func loadExportedFile(_ file: ExportedFile) {
         let contentParts = file.content.components(separatedBy: "---")
         if contentParts.count > 2 {
-            // YAML front matter is between first and second '---'
-            // Optionally parse YAML for link, cited, etc.
-            // For now, just load the body
             bodyText = contentParts[2].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         } else {
             bodyText = file.content.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         }
-        title = file.filename.replacingOccurrences(of: ".md", with: "").components(separatedBy: "-")
-            .dropFirst().joined(separator: " ")
+        // Improved: Only remove the date prefix (yyyy-mm-dd-) if present, and join the rest with dashes replaced by spaces
+        let base = file.filename.replacingOccurrences(of: ".md", with: "")
+        let regex = try? NSRegularExpression(pattern: "^\\d{4}-\\d{2}-\\d{2}-", options: [])
+        let titlePart: String
+        if let regex = regex,
+            let match = regex.firstMatch(
+                in: base, options: [], range: NSRange(location: 0, length: base.utf16.count)),
+            match.range.location == 0
+        {
+            let startIdx = base.index(base.startIndex, offsetBy: match.range.length)
+            titlePart = String(base[startIdx...])
+        } else {
+            titlePart = base
+        }
+        title = titlePart.replacingOccurrences(of: "-", with: " ")
     }
 
     func clearForm() {
@@ -250,6 +327,8 @@ struct ContentView: View {
         bodyText = ""
         link = ""
         citation = ""
+        optionalAuthor = ""
+        optionalTags = ""
     }
 
     func cleanupExportFile() {
@@ -264,8 +343,6 @@ struct FooterMenuBar: View {
     @Binding var showArchive: Bool
     @Binding var showSettings: Bool
     let exportAction: () -> Void
-    let saveAction: () -> Void
-    let clearAction: () -> Void
     let exportDisabled: Bool
 
     var body: some View {
@@ -275,22 +352,11 @@ struct FooterMenuBar: View {
                     .font(.title2)
             }
             Spacer()
-            Button(action: saveAction) {
-                Image(systemName: "tray.and.arrow.down")
-                    .font(.title2)
-            }
-            .disabled(exportDisabled)
-            Spacer()
             Button(action: exportAction) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.title2)
             }
             .disabled(exportDisabled)
-            Spacer()
-            Button(action: clearAction) {
-                Image(systemName: "xmark.circle")
-                    .font(.title2)
-            }
             Spacer()
             Button(action: { showSettings = true }) {
                 Image(systemName: "gear")
@@ -311,7 +377,7 @@ struct ArchiveView: View {
     @AppStorage("swipeLeftShortAction") private var swipeLeftShortAction: String = "delete"
     @AppStorage("swipeLeftLongAction") private var swipeLeftLongAction: String = "export"
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "restore"
-    @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "export"
+    @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
     @State private var selectedFile: ExportedFile?
     @State private var showShareSheet = false
     @State private var shareURL: URL?
@@ -519,6 +585,7 @@ struct SettingsView: View {
     @AppStorage("swipeLeftLongAction") private var swipeLeftLongAction: String = "restore"
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "export"
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
+    @AppStorage("fontSize") private var fontSize: Double = 14
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -546,6 +613,14 @@ struct SettingsView: View {
                         Text("Dark").tag("dark")
                     }
                     .pickerStyle(SegmentedPickerStyle())
+                    HStack {
+                        Text("Font Size")
+                        Slider(value: $fontSize, in: 8...28, step: 1) {
+                            Text("Font Size")
+                        }
+                        Text("\(Int(fontSize)) pt")
+                            .frame(width: 48, alignment: .trailing)
+                    }
                 }
                 Section(header: Text("Defaults")) {
                     TextField("Default Author", text: $defaultAuthor)
@@ -606,7 +681,11 @@ struct PreviewView: View {
             Divider()
             ScrollView {
                 Text(text)
-                    .font(.body)
+                    .font(
+                        .system(
+                            size: UserDefaults.standard.double(forKey: "fontSize") == 0
+                                ? 16 : UserDefaults.standard.double(forKey: "fontSize"))
+                    )
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
             }
