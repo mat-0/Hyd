@@ -1,59 +1,56 @@
-# Hyd
+# Hyd - Note Taking & Export App
 
-Hyd is a SwiftUI-based Markdown note-taking and export app for iOS and macOS. It allows you to write, preview, export, and manage Markdown notes with YAML front matter, supporting features like an archive of all entries, export history, and customizable swipe actions.
+Hyd is a simple, accessible note-taking and Markdown export app for macOS and iOS, designed for fast capture, easy export, and archiving of notes. All logic and UI are now in a single file: `AppMain.swift`.
 
 ## Features
 
-- Write and edit Markdown notes
-- Save notes to the Archive with a Save button
-- Export notes with YAML front matter as `.md` files
-- Preview Markdown content
-- Archive view for all saved and exported notes
-- Customizable swipe actions for archive entries
-- Settings for appearance, default author, and tags
-
-## Requirements
-
-- Xcode 15 or later
-- Swift 5.9+
-- iOS 15.0+ or macOS 12.0+
-
-## Dependencies
-
-- [apple/swift-markdown](https://github.com/apple/swift-markdown)
-- [swiftlang/swift-cmark](https://github.com/swiftlang/swift-cmark)
-
-Dependencies are managed via Swift Package Manager and are already included in the project.
-
-## Getting Started
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone <your-repo-url>
-   cd Hyd
-   ```
-
-2. **Open the project in Xcode:**
-   - Open `Hyd.xcodeproj` in Xcode.
-3. **Build and run:**
-   - Select the desired simulator or your device.
-   - Press `Cmd+R` to build and run the app.
+- **Quick Note Capture:** Enter a title, body (Markdown), and optional metadata (link, citation, author, tags).
+- **Save & Clear:** Save notes to the archive or clear the form. Save/Clear buttons are always accessible in the header.
+- **Export:** Export notes as Markdown files. Exported files are saved to the archive and can be shared.
+- **Archive:** View, re-import, export, or delete previous notes from the archive. Empty state messaging is shown if no notes are archived.
+- **Settings:**
+  - Choose light, dark, or system theme.
+  - Adjust font size for all UI elements (fully accessible, including Settings).
+  - Set default author and tags for new notes.
+  - Configure swipe actions for archive items.
+  - Toggle global accessibility labels: show/hide text labels next to icons throughout the app for improved accessibility.
+- **Footer Menu:** Always visible at the bottom of the view, with Archive, Export, and Settings buttons. Button labels and spacing adapt to accessibility settings.
+- **Full Accessibility:** All controls have accessibility labels (when enabled), and the UI respects user font size preferences everywhere.
 
 ## Usage
 
-- **Write notes:** Use the main editor to write Markdown notes. Title, body, link, and citation fields are available.
-- **Save:** Tap the Save button (tray icon) to add your note to the Archive.
-- **Export:** Tap the export button to save your note as a Markdown file with YAML front matter.
-- **Archive:** All saved and exported notes appear in the Archive. Exported items are marked with a tick.
-- **Settings:** Customize appearance, default author/tags, and swipe actions.
+1. **Create a Note:**
+   - Enter a title and body (Markdown supported).
+   - Optionally add a link, citation, author, or tags.
+   - Tap **Save** (or use the Save icon) to archive the note, or **Clear** to reset the form.
+2. **Export:**
+   - Tap the Export button in the footer to export the current note as a Markdown file. The file is saved to the archive and can be shared.
+3. **Archive:**
+   - Tap the Archive button in the footer to view all saved notes. Swipe or use context menus to export, re-import, or delete notes.
+   - Tap a note to preview its content.
+4. **Settings:**
+   - Tap the Settings button in the footer to adjust theme, font size, swipe actions, and accessibility label preferences.
+   - All settings are applied instantly and persist between launches.
+5. **Accessibility:**
+   - Enable "Accessibility Labels" in Settings to show text labels next to all icons for easier navigation with assistive technologies.
+   - All UI elements scale with your chosen font size.
 
-## Project Structure
+## Codebase
 
-- `Hyd/` — Main SwiftUI source files
-- `Hyd.xcodeproj/` — Xcode project files
-- `Assets.xcassets/` — App icons and color assets
+- All app logic and UI are in `Hyd/AppMain.swift`.
+- No redundant files or settings remain. The codebase is streamlined for maintainability and accessibility.
 
-## License
+## Requirements
 
-This project is for personal use. See LICENSE file if present.
+- Xcode 14+
+- Swift 5.7+
+- macOS 12+ or iOS 15+
+
+## Building & Running
+
+1. Open `Hyd.xcodeproj` in Xcode.
+2. Build and run on your Mac or iOS device/simulator.
+
+---
+
+For questions or feedback, please open an issue or contact the maintainer.
