@@ -169,7 +169,10 @@ struct ContentView: View {
                         }
                     }
                 }
-                .navigationTitle("New Post")
+                .navigationTitle("")
+                #if os(iOS)
+                    .navigationBarTitleDisplayMode(.inline)
+                #endif
                 VStack {
                     Spacer()
                     FooterMenuBar(
@@ -345,13 +348,14 @@ struct FooterMenuBar: View {
     let exportAction: () -> Void
     let exportDisabled: Bool
     @AppStorage("showFooterLabels") private var showFooterLabels: Bool = false
+    @AppStorage("fontSize") private var fontSize: Double = 14
 
     var body: some View {
         HStack {
             Button(action: { showArchive = true }) {
                 if showFooterLabels {
                     Label("Archive", systemImage: "archivebox")
-                        .font(.title2)
+                        .font(.system(size: fontSize))
                 } else {
                     Image(systemName: "archivebox")
                         .font(.title2)
@@ -361,7 +365,7 @@ struct FooterMenuBar: View {
             Button(action: exportAction) {
                 if showFooterLabels {
                     Label("Export", systemImage: "square.and.arrow.up")
-                        .font(.title2)
+                        .font(.system(size: fontSize))
                 } else {
                     Image(systemName: "square.and.arrow.up")
                         .font(.title2)
@@ -372,7 +376,7 @@ struct FooterMenuBar: View {
             Button(action: { showSettings = true }) {
                 if showFooterLabels {
                     Label("Settings", systemImage: "gear")
-                        .font(.title2)
+                        .font(.system(size: fontSize))
                 } else {
                     Image(systemName: "gear")
                         .font(.title2)
@@ -613,13 +617,13 @@ struct SettingsView: View {
                     .pickerStyle(SegmentedPickerStyle())
                     HStack {
                         Text("Font Size")
-                        Slider(value: $fontSize, in: 8...28, step: 1) {
+                        Slider(value: $fontSize, in: 10...28, step: 2) {
                             Text("Font Size")
                         }
                         Text("\(Int(fontSize)) pt")
                             .frame(width: 48, alignment: .trailing)
                     }
-                    Toggle("Show Footer Labels (Accessibility)", isOn: $showFooterLabels)
+                    Toggle("Show Footer Text Labels", isOn: $showFooterLabels)
                 }
                 Section(header: Text("Defaults")) {
                     TextField("Default Author", text: $defaultAuthor)
