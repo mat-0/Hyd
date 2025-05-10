@@ -128,31 +128,37 @@ struct ContentView: View {
                             .font(.system(size: fontSize, weight: .semibold))
                             .foregroundColor(.secondary)
                         Spacer()
-                        HStack(spacing: 8) {
+                        HStack(spacing: showAccessibilityLabels ? 8 : 20) {
                             Button(action: saveEntry) {
-                                if showAccessibilityLabels {
-                                    Label("Save", systemImage: "tray.and.arrow.down.fill")
-                                } else {
+                                HStack(spacing: 4) {
                                     Image(systemName: "tray.and.arrow.down.fill")
+                                        .font(.system(size: fontSize, weight: .semibold))
+                                        .foregroundColor(.accentColor)
+                                    if showAccessibilityLabels {
+                                        Text("Save")
+                                            .font(.system(size: fontSize, weight: .semibold))
+                                            .foregroundColor(.accentColor)
+                                    }
                                 }
                             }
-                            .buttonStyle(.bordered)
-                            .tint(.green)
-                            .font(.system(size: fontSize, weight: .semibold))
+                            .buttonStyle(.plain)
                             .disabled(title.isEmpty || bodyText.isEmpty)
-                            .if(showAccessibilityLabels) { $0.accessibilityLabel("Save Note") }
+                            .if(showAccessibilityLabels) { $0.accessibilityLabel("Save") }
 
                             Button(action: clearForm) {
-                                if showAccessibilityLabels {
-                                    Label("Clear", systemImage: "trash")
-                                } else {
+                                HStack(spacing: 4) {
                                     Image(systemName: "trash")
+                                        .font(.system(size: fontSize, weight: .semibold))
+                                        .foregroundColor(.accentColor)
+                                    if showAccessibilityLabels {
+                                        Text("Clear")
+                                            .font(.system(size: fontSize, weight: .semibold))
+                                            .foregroundColor(.accentColor)
+                                    }
                                 }
                             }
-                            .buttonStyle(.bordered)
-                            .tint(.red)
-                            .font(.system(size: fontSize, weight: .semibold))
-                            .if(showAccessibilityLabels) { $0.accessibilityLabel("Clear Form") }
+                            .buttonStyle(.plain)
+                            .if(showAccessibilityLabels) { $0.accessibilityLabel("Clear") }
                         }
                     }
                     .padding(.horizontal)
@@ -423,6 +429,7 @@ struct ArchiveView: View {
     @State private var shareURL: URL?
     @State private var previewMarkdown: PreviewMarkdown? = nil
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("fontSize") private var fontSize: Double = 14
 
     var body: some View {
         VStack(spacing: 0) {
@@ -431,9 +438,20 @@ struct ArchiveView: View {
                     .font(.headline)
                     .padding(.leading)
                 Spacer()
-                Button("Close") { dismiss() }
-                    .padding(.trailing)
-                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Close Archive") }
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: fontSize, weight: .semibold))
+                            .foregroundColor(.accentColor)
+                        if showAccessibilityLabels {
+                            Text("Close")
+                                .font(.system(size: fontSize, weight: .semibold))
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                .padding(.trailing)
+                .if(showAccessibilityLabels) { $0.accessibilityLabel("Close") }
             }
             .frame(height: 44)
             #if os(iOS)
@@ -638,9 +656,20 @@ struct SettingsView: View {
                     .font(.headline)
                     .padding(.leading)
                 Spacer()
-                Button("Close") { dismiss() }
-                    .padding(.trailing)
-                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Close Settings") }
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: fontSize, weight: .semibold))
+                            .foregroundColor(.accentColor)
+                        if showAccessibilityLabels {
+                            Text("Close")
+                                .font(.system(size: fontSize, weight: .semibold))
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                .padding(.trailing)
+                .if(showAccessibilityLabels) { $0.accessibilityLabel("Close") }
             }
             .frame(height: 44)
             #if os(iOS)
@@ -709,6 +738,7 @@ struct PreviewView: View {
     let text: String
     @AppStorage("showAccessibilityLabels") private var showAccessibilityLabels: Bool = false
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("fontSize") private var fontSize: Double = 14
 
     var body: some View {
         VStack(spacing: 0) {
@@ -717,9 +747,20 @@ struct PreviewView: View {
                     .font(.headline)
                     .padding(.leading)
                 Spacer()
-                Button("Close") { dismiss() }
-                    .padding(.trailing)
-                    .if(showAccessibilityLabels) { $0.accessibilityLabel("Close Preview") }
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: fontSize, weight: .semibold))
+                            .foregroundColor(.accentColor)
+                        if showAccessibilityLabels {
+                            Text("Close")
+                                .font(.system(size: fontSize, weight: .semibold))
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                .padding(.trailing)
+                .if(showAccessibilityLabels) { $0.accessibilityLabel("Close") }
             }
             .frame(height: 44)
             #if os(iOS)
