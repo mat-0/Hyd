@@ -50,4 +50,3 @@ Hyd is a simple, accessible note-taking and Markdown export app for macOS and iO
 
 1. Open `Hyd.xcodeproj` in Xcode.
 2. Build and run on your Mac or iOS device/simulator.
-
