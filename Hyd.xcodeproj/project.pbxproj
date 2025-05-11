@@ -14,9 +14,22 @@
 		407E061B2DCFC286006D2CA6 /* Hyd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hyd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		40F9D74F2DD0A34C00A17EB9 /* Exceptions for "Hyd" folder in "Hyd" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 407E061A2DCFC286006D2CA6 /* Hyd */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		407E061D2DCFC286006D2CA6 /* Hyd */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				40F9D74F2DD0A34C00A17EB9 /* Exceptions for "Hyd" folder in "Hyd" target */,
+			);
 			path = Hyd;
 			sourceTree = "<group>";
 		};
@@ -265,6 +278,7 @@
 				DEVELOPMENT_TEAM = Y5HUV85RWN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Hyd/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Hyd;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -294,6 +308,7 @@
 				DEVELOPMENT_TEAM = Y5HUV85RWN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Hyd/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Hyd;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

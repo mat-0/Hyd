@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage("swipeLeftLongAction") private var swipeLeftLongAction: String = "export"
     @AppStorage("swipeRightShortAction") private var swipeRightShortAction: String = "restore"
     @AppStorage("swipeRightLongAction") private var swipeRightLongAction: String = "preview"
+    @AppStorage("biometricsEnabled") private var biometricsEnabled: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     let swipeActions = [
@@ -78,26 +79,58 @@ struct SettingsView: View {
                         .font(.system(size: fontSize))
                 }
                 Section(
+                    header: Text("Security").font(.system(size: fontSize, weight: .semibold))
+                ) {
+                    Toggle("Require Biometrics", isOn: $biometricsEnabled)
+                        .font(.system(size: fontSize))
+                }
+                Section(
                     header: Text("Swipe Gestures").font(.system(size: fontSize, weight: .semibold))
                 ) {
-                    Picker("Swipe Left (Short)", selection: $swipeLeftShortAction) {
-                        ForEach(swipeActions, id: \.0) { action, label in
-                            Text(label).font(.system(size: fontSize)).tag(action)
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("Swipe Left (Short)")
+                                .font(.system(size: fontSize))
+                            Spacer()
+                            Picker("Swipe Left (Short)", selection: $swipeLeftShortAction) {
+                                ForEach(swipeActions, id: \.0) { action, label in
+                                    Text(label).font(.system(size: fontSize)).tag(action)
+                                }
+                            }
+                            .labelsHidden()
                         }
-                    }
-                    Picker("Swipe Left (Long)", selection: $swipeLeftLongAction) {
-                        ForEach(swipeActions, id: \.0) { action, label in
-                            Text(label).font(.system(size: fontSize)).tag(action)
+                        HStack {
+                            Text("Swipe Left (Long)")
+                                .font(.system(size: fontSize))
+                            Spacer()
+                            Picker("Swipe Left (Long)", selection: $swipeLeftLongAction) {
+                                ForEach(swipeActions, id: \.0) { action, label in
+                                    Text(label).font(.system(size: fontSize)).tag(action)
+                                }
+                            }
+                            .labelsHidden()
                         }
-                    }
-                    Picker("Swipe Right (Short)", selection: $swipeRightShortAction) {
-                        ForEach(swipeActions, id: \.0) { action, label in
-                            Text(label).font(.system(size: fontSize)).tag(action)
+                        HStack {
+                            Text("Swipe Right (Short)")
+                                .font(.system(size: fontSize))
+                            Spacer()
+                            Picker("Swipe Right (Short)", selection: $swipeRightShortAction) {
+                                ForEach(swipeActions, id: \.0) { action, label in
+                                    Text(label).font(.system(size: fontSize)).tag(action)
+                                }
+                            }
+                            .labelsHidden()
                         }
-                    }
-                    Picker("Swipe Right (Long)", selection: $swipeRightLongAction) {
-                        ForEach(swipeActions, id: \.0) { action, label in
-                            Text(label).font(.system(size: fontSize)).tag(action)
+                        HStack {
+                            Text("Swipe Right (Long)")
+                                .font(.system(size: fontSize))
+                            Spacer()
+                            Picker("Swipe Right (Long)", selection: $swipeRightLongAction) {
+                                ForEach(swipeActions, id: \.0) { action, label in
+                                    Text(label).font(.system(size: fontSize)).tag(action)
+                                }
+                            }
+                            .labelsHidden()
                         }
                     }
                 }

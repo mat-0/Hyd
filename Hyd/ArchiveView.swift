@@ -99,7 +99,8 @@ struct ArchiveView: View {
                             } label: {
                                 Label(
                                     swipeLeftShortAction.capitalized,
-                                    systemImage: iconName(for: swipeLeftShortAction))
+                                    systemImage: iconName(for: swipeLeftShortAction)
+                                )
                                 .font(.system(size: fontSize))
                             }
                             .tint(tintColor(for: swipeLeftShortAction))
@@ -108,7 +109,8 @@ struct ArchiveView: View {
                             } label: {
                                 Label(
                                     swipeLeftLongAction.capitalized,
-                                    systemImage: iconName(for: swipeLeftLongAction))
+                                    systemImage: iconName(for: swipeLeftLongAction)
+                                )
                                 .font(.system(size: fontSize))
                             }
                             .tint(tintColor(for: swipeLeftLongAction))
@@ -119,7 +121,8 @@ struct ArchiveView: View {
                             } label: {
                                 Label(
                                     swipeRightShortAction.capitalized,
-                                    systemImage: iconName(for: swipeRightShortAction))
+                                    systemImage: iconName(for: swipeRightShortAction)
+                                )
                                 .font(.system(size: fontSize))
                             }
                             .tint(tintColor(for: swipeRightShortAction))
@@ -128,7 +131,8 @@ struct ArchiveView: View {
                             } label: {
                                 Label(
                                     swipeRightLongAction.capitalized,
-                                    systemImage: iconName(for: swipeRightLongAction))
+                                    systemImage: iconName(for: swipeRightLongAction)
+                                )
                                 .font(.system(size: fontSize))
                             }
                             .tint(tintColor(for: swipeRightLongAction))
