@@ -281,6 +281,7 @@
 				INFOPLIST_FILE = Hyd/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Hyd;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your app with Biometrics";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -311,6 +312,7 @@
 				INFOPLIST_FILE = Hyd/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Hyd;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Unlock your notes with Face ID for privacy and security";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
