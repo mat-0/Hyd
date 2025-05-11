@@ -33,8 +33,9 @@ struct PreviewView: View {
             Divider()
             ScrollView {
                 Text(text)
-                    .padding()
                     .font(.system(size: fontSize))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
             }
         }
     }
